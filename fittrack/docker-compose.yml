@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fittrack_postgres
+    environment:
+      POSTGRES_DB: fittrack
+      POSTGRES_USER: fittrack
+      POSTGRES_PASSWORD: fittrack123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fittrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:7
+    container_name: fittrack_mongo
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: fittrack_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: fittrack_backend
+    ports:
+      - "3000:3000"
+    env_file: ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    container_name: fittrack_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  mongo_data:
