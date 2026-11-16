@@ -9,8 +9,8 @@ Sistema para academias gerenciarem alunos, planos, fichas de treino e performanc
 # Integrantes
 
 - Pedro de Oliveira Schwank — RA: 22.125.074-9
-- Leonardo Guadagni — RA: 22.125.081-4
-- Felipe Franco Falcon — RA: 22.125.073-1
+- Felipe Pereira Munerato - RA: 22.125.076-4 
+- Daniel Borrachina Clemente - RA:22.124.078-1
 
 ---
 
